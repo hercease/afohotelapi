@@ -25,8 +25,8 @@ class HotelModels {
         $nationality = $params['nationality'] ?? 'NG';
         $destination = $params['destination'] ?? '75';
         $roomBasis = $params['roomBasis'] ?? '';
-        $minPrice = $params['minPrice'] ?? '0';
-        $maxPrice = $params['maxPrice'] ?? '1000000';
+        $minPrice = $params['minPrice'] ?? 0;
+        $maxPrice = $params['maxPrice'] ?? 1000000;
         $starLevels = $params['starLevels'] ?? '';
 
         // Build filter XML sections
@@ -81,10 +81,8 @@ class HotelModels {
 
         // Price Range Filter (if you want to add it)
         if ($minPrice > 0) {
-            $filterXml .= '<FilterPriceRange>' . PHP_EOL;
-            $filterXml .= '    <MinPrice>' . $minPrice . '</MinPrice>' . PHP_EOL;
-            $filterXml .= '    <MaxPrice>' . $maxPrice . '</MaxPrice>' . PHP_EOL;
-            $filterXml .= '</FilterPriceRange>' . PHP_EOL;
+            $filterXml .= '    <FilterPriceMin>' . $minPrice . '</FilterPriceMin>' . PHP_EOL;
+            $filterXml .= '   <FilterPriceMax>' . $maxPrice . '</FilterPriceMax>' . PHP_EOL;
         }
 
         return $filterXml;
@@ -122,7 +120,7 @@ class HotelModels {
         ];
 
         $response = $client->MakeRequest($params);
-        //error_log("Search Response :", $response);
+        error_log("Response :" . print_r($response, true));
         $resp = $this->processWithBatchInfo($response, $page);
         return json_encode($resp);
         //$responseArray = json_decode(json_encode($response), true);
