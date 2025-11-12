@@ -249,6 +249,8 @@ class HotelModels {
     private function fetchBatchHotelInfo($hotelCodes) {
        
         $hotelsInfo = [];
+
+        //error_log("Fetching hotel info for hotels: " . implode(", ", $hotelCodes));
         
         foreach ($hotelCodes as $hotelCode) {
             
@@ -259,15 +261,15 @@ class HotelModels {
     }
 
     private function fetchSingleHotelInfo($hotelCode) {
-        // Your existing SOAP call to get hotel info
-        // This would be similar to the fetchHotelInfo method in the previous example
+        // Existing SOAP call to get hotel info
+        //error_log("Fetching hotel info for hotel code: " . $hotelCode);
         try {
             $client = new SoapClient(WSDL, [
                 'soap_version' => SOAP_1_2,
                 'trace' => 1,
                 'exceptions' => true,
+                'location' => ENDPOINT,
                 'cache_wsdl' => WSDL_CACHE_NONE,
-                'location' => ENDPOINT
             ]);
 
             $xmlRequest = '<Root>
@@ -286,14 +288,14 @@ class HotelModels {
 
             
             $response = $client->MakeRequest([
-                'requestType' => '6',
+                'requestType' => '61',
                 'xmlRequest' => $xmlRequest
             ]);
 
             
 
             $resp = $this->convertXmlTojson($response);
-            //error_log("Hotel Info : " . print_r($resp, true));
+            //error_log("Hotel Info Check : " . print_r($resp, true));
             return $resp;
 
 
@@ -437,6 +439,143 @@ class HotelModels {
 
         //header('Content-Type: application/json');
         return $finalResult;
+    }
+
+    public function processBookingEvaluation($hotelCode, $checkIn, $hotelSearchCode) {
+       
+        $evaluationXML = '<Root>
+                                <Header>
+                                    <Agency>' . AGENCY_ID . '</Agency>
+                                    <User>' . USERNAME . '</User>
+                                    <Password>' . PASSWORD . '</Password>
+                                    <Operation>BOOKING_VALUATION_REQUEST</Operation>
+                                    <OperationType>Request</OperationType>
+                                </Header>
+                                <Main Version="2.0">
+                                    <HotelSearchCode>' . $hotelSearchCode . '</HotelSearchCode>
+                                    <ArrivalDate>' . $checkIn . '</ArrivalDate>
+                                </Main>
+                        </Root>';
+
+        $response = $this->fetchBookingEvaluation($evaluationXML);
+        $finalResult = [];
+    
+        if (is_object($response) && property_exists($response, 'MakeRequestResult')) {
+            $result = $response->MakeRequestResult;
+            
+            if (is_string($result)) {
+                // Try JSON first
+                $jsonData = json_decode($result, true);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    $finalResult = $jsonData;
+                } else {
+                    // Convert XML to JSON
+                    $xml = simplexml_load_string($result);
+                    if ($xml !== false) {
+                        $finalResult = [
+                            'cancellationDate' => (string)$xml->Main->CancellationDeadline,
+                            'description' => (string)$xml->Main->Description,
+                            'remarks' => array_filter(explode('<BR />', (string)$xml->Main->Remarks)),
+                        ];
+                        
+                    } else {
+                        $finalResult = ['error' => 'Unable to parse response', 'raw' => $result];
+                    }
+                }
+            }
+        }
+
+        return json_encode($finalResult);
+        
+    }
+
+   public function processPriceBreakDown($hotelSearchCode) {
+        $breakdownXML = '<Root>
+            <Header>
+                <Agency>' . AGENCY_ID . '</Agency>
+                <User>' . USERNAME . '</User>
+                <Password>' . PASSWORD . '</Password>
+                <Operation>PRICE_BREAKDOWN_REQUEST</Operation>
+                <OperationType>Request</OperationType>
+            </Header>
+            <Main>
+                <HotelSearchCode>' . $hotelSearchCode . '</HotelSearchCode>
+            </Main>
+        </Root>';
+
+        $response = $this->fetchPriceBreakDown($breakdownXML);
+        $finalResult = [];
+
+        if (is_object($response) && property_exists($response, 'MakeRequestResult')) {
+            $result = $response->MakeRequestResult;
+            
+            if (is_string($result)) {
+                $xml = simplexml_load_string($result);
+                if ($xml !== false) {
+                    $breakdownArray = [];
+                    
+                    // Extract all price breakdowns
+                    foreach ($xml->Main->Room->PriceBreakdown as $breakdown) {
+                        $breakdownArray[] = [
+                            'from_date' => (string)$breakdown->FromDate,
+                            'to_date' => (string)$breakdown->ToDate,
+                            'price' => (float)$breakdown->Price,
+                            'currency' => (string)$breakdown->Currency
+                        ];
+                    }
+                    
+                    $finalResult = [
+                        'success' => true,
+                        'price_breakdown' => $breakdownArray,
+                        'hotel_name' => (string)$xml->Main->HotelName,
+                        'room_type' => (string)$xml->Main->Room->RoomType
+                    ];
+                } else {
+                    $finalResult = ['error' => 'Unable to parse XML response'];
+                }
+            }
+
+            return json_encode($finalResult);
+        } else {
+            return json_encode(['error' => 'Unable to fetch price breakdown']);
+        }
+
+        
+    }
+
+    public function fetchBookingEvaluation($xmlRequest) {
+        $client = new SoapClient(WSDL, [
+            'soap_version' => SOAP_1_2,
+            'trace' => 1,
+            'exceptions' => true,
+            'location' => ENDPOINT
+        ]);
+
+        $params = [
+            'requestType' => '9',
+            'xmlRequest' => $xmlRequest
+        ];
+
+        $response = $client->MakeRequest($params);
+        return $response;
+    }
+
+    public function fetchPriceBreakDown($xmlRequest) {
+        $client = new SoapClient(WSDL, [
+            'soap_version' => SOAP_1_2,
+            'trace' => 1,
+            'exceptions' => true,
+            'location' => ENDPOINT
+        ]);
+
+        $params = [
+            'requestType' => '14',
+            'xmlRequest' => $xmlRequest
+        ];
+
+        $response = $client->MakeRequest($params);
+        error_log("Price Breakdown :" . print_r($response, true));
+        return $response;
     }
 
 
