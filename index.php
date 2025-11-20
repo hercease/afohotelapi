@@ -42,6 +42,14 @@ switch ($action) {
         $response = $HotelControllers->priceBreakDown();
         echo $response;
         break;
+    case 'bookHotel':
+        $response = $HotelControllers->hotelBooking();
+        echo $response;
+        break;
+    case 'bookingDetails':
+        $response = $HotelControllers->bookingDetails();
+        echo $response;
+        break;
     default:
         $response = ["status" => "error", "message" => "Invalid action"];
         echo json_encode($response);

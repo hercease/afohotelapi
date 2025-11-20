@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmation</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            background-color: #f8f9fa;
+        }
+        
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0000FF 0%, #0066FF 100%);
+            padding: 30px 40px;
+            text-align: center;
+        }
+        
+        .logo-container {
+            margin-bottom: 20px;
+        }
+        
+        .logo-placeholder {
+            width: 150px;
+            height: 60px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 2px dashed rgba(255, 255, 255, 0.5);
+            border-radius: 8px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+        
+        .confirmation-badge {
+            background-color: #008000;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 16px;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        
+        .booking-code {
+            color: white;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            border: 1px solid #e6e6e6;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .section-header {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-bottom: 1px solid #e6e6e6;
+            font-weight: 600;
+            color: #4D4D4D;
+        }
+        
+        .section-body {
+            padding: 25px;
+        }
+        
+        .hotel-info {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+        
+        .hotel-image {
+            width: 120px;
+            height: 100px;
+            border-radius: 8px;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 12px;
+        }
+        
+        .hotel-details {
+            flex: 1;
+        }
+        
+        .hotel-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .hotel-address {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .booking-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .grid-item {
+            text-align: center;
+        }
+        
+        .grid-value {
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .grid-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .guest-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .guest-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .guest-item:last-child {
+            border-bottom: none;
+        }
+        
+        .guest-name {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .guest-type {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .price-breakdown {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .price-label {
+            color: #666;
+        }
+        
+        .price-value {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .total-row {
+            border-top: 2px solid #e6e6e6;
+            padding-top: 12px;
+            margin-top: 5px;
+        }
+        
+        .total-label {
+            font-weight: 600;
+            color: #333;
+            font-size: 16px;
+        }
+        
+        .total-value {
+            font-weight: 700;
+            color: #0000FF;
+            font-size: 18px;
+        }
+        
+        .remarks {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        .remarks-title {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+        
+        .remarks-content {
+            font-size: 14px;
+            color: #333;
+            line-height: 1.5;
+        }
+        
+        .footer {
+            background-color: #f8f9fa;
+            padding: 30px 40px;
+            text-align: center;
+            border-top: 1px solid #e6e6e6;
+        }
+        
+        .contact-info {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        
+        .support-email {
+            color: #0000FF;
+            text-decoration: none;
+        }
+        
+        .copyright {
+            color: #999;
+            font-size: 12px;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 600px) {
+            .content {
+                padding: 20px;
+            }
+            
+            .booking-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .hotel-info {
+                flex-direction: column;
+            }
+            
+            .hotel-image {
+                width: 100%;
+                height: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header with Logo Space -->
+        <div class="header">
+            <div class="logo-container">
+                <div class="logo-placeholder">
+                    <!-- Replace this div with your actual logo -->
+                    <span>YOUR LOGO HERE</span>
+                </div>
+            </div>
+            <div class="confirmation-badge">
+                ✓ Booking Confirmed
+            </div>
+            <div class="booking-code">
+                Confirmation Code: #{{booking_code}}
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="content">
+            <!-- Hotel & Stay Information -->
+            <div class="section">
+                <div class="section-header">
+                    Hotel & Stay Information
+                </div>
+                <div class="section-body">
+                    <div class="hotel-info">
+                        <div class="hotel-image">
+                            Hotel Image
+                        </div>
+                        <div class="hotel-details">
+                            <h1 class="hotel-name">{{hotel_name}}</h1>
+                            <div class="hotel-address">
+                                📍 {{address}}
+                            </div>
+                            <div class="room-info">
+                                <strong>Room:</strong> {{rooms[0].rooms[0].category}}
+                                {{#if rooms[0].type}} - {{rooms[0].type}}{{/if}}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="booking-grid">
+                        <div class="grid-item">
+                            <div class="grid-value">{{check_in}}</div>
+                            <div class="grid-label">Check-in</div>
+                        </div>
+                        <div class="grid-item">
+                            <div class="grid-value">{{check_out}}</div>
+                            <div class="grid-label">Check-out</div>
+                        </div>
+                        <div class="grid-item">
+                            <div class="grid-value">{{nights}}</div>
+                            <div class="grid-label">Nights</div>
+                        </div>
+                        <div class="grid-item">
+                            <div class="grid-value">{{summary.total_adults}}</div>
+                            <div class="grid-label">Adults</div>
+                        </div>
+                        <div class="grid-item">
+                            <div class="grid-value">{{total_rooms}}</div>
+                            <div class="grid-label">Rooms</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Guest Information -->
+            <div class="section">
+                <div class="section-header">
+                    Guest Information
+                </div>
+                <div class="section-body">
+                    <div class="guest-list">
+                        {{#each rooms}}
+                            {{#each this.rooms}}
+                                {{#each this.adults}}
+                                <div class="guest-item">
+                                    <span class="guest-name">{{this.first_name}} {{this.last_name}}</span>
+                                    <span class="guest-type">Adult</span>
+                                </div>
+                                {{/each}}
+                                {{#each this.children}}
+                                <div class="guest-item">
+                                    <span class="guest-name">{{this.first_name}} {{this.last_name}} (Age: {{this.child_age}})</span>
+                                    <span class="guest-type">Child</span>
+                                </div>
+                                {{/each}}
+                            {{/each}}
+                        {{/each}}
+                    </div>
+                    
+                    {{#if remarks}}
+                    <div class="remarks">
+                        <div class="remarks-title">Important Notes</div>
+                        <div class="remarks-content">{{remarks}}</div>
+                    </div>
+                    {{/if}}
+                </div>
+            </div>
+            
+            <!-- Pricing Information -->
+            <div class="section">
+                <div class="section-header">
+                    Pricing Breakdown
+                </div>
+                <div class="section-body">
+                    <div class="price-breakdown">
+                        <div class="price-row">
+                            <span class="price-label">Room Rate ({{nights}} nights)</span>
+                            <span class="price-value">{{currency}} {{total_price}}</span>
+                        </div>
+                        <div class="price-row">
+                            <span class="price-label">Number of Adults</span>
+                            <span class="price-value">{{summary.total_adults}}</span>
+                        </div>
+                        {{#if summary.total_children}}
+                        <div class="price-row">
+                            <span class="price-label">Number of Children</span>
+                            <span class="price-value">{{summary.total_children}}</span>
+                        </div>
+                        {{/if}}
+                        <div class="price-row">
+                            <span class="price-label">Number of Rooms</span>
+                            <span class="price-value">{{total_rooms}}</span>
+                        </div>
+                        <div class="price-row total-row">
+                            <span class="total-label">Total Amount</span>
+                            <span class="total-value">{{currency}} {{total_price}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Booking Reference -->
+            <div class="section">
+                <div class="section-header">
+                    Booking References
+                </div>
+                <div class="section-body">
+                    <div class="price-breakdown">
+                        <div class="price-row">
+                            <span class="price-label">Booking Code</span>
+                            <span class="price-value">{{booking_code}}</span>
+                        </div>
+                        <div class="price-row">
+                            <span class="price-label">Reference Number</span>
+                            <span class="price-value">{{booking_reference}}</span>
+                        </div>
+                        <div class="price-row">
+                            <span class="price-label">Client Reference</span>
+                            <span class="price-value">{{client_booking_code}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <div class="contact-info">
+                Need help? Contact our support team at 
+                <a href="mailto:support@yourcompany.com" class="support-email">support@yourcompany.com</a>
+            </div>
+            <div class="copyright">
+                © 2024 Your Company Name. All rights reserved.<br>
+                This is an automated email, please do not reply directly to this message.
+            </div>
+        </div>
+    </div>
+</body>
+</html>
